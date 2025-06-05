@@ -1,11 +1,11 @@
-import sys
+import os
+import platform
+from functools import lru_cache
+from threading import Event, Thread
+
 import psutil
 import pystray
 from PIL import Image, ImageDraw
-import platform
-import os
-from threading import Event, Thread
-from functools import lru_cache
 
 try:
     from version import VERSION, BUILD_DATE
@@ -13,11 +13,12 @@ except ImportError:
     VERSION = "dev"
     BUILD_DATE = "unknown"
 
+
 class SystemMetricsTray:
     def __init__(self):
         self.os_type = platform.system()
         self.stop_event = Event()
-        
+
         # Cache gradients to avoid recalculation
         self._gradient_cache = {
             'cpu': self._generate_gradient((0, 100, 0, 230), (0, 255, 0, 230)),
@@ -25,15 +26,15 @@ class SystemMetricsTray:
             'disk': self._generate_gradient((0, 0, 100, 230), (0, 0, 255, 230)),
             'bg': self._generate_gradient((40, 40, 40, 100), (80, 80, 80, 100))
         }
-        
+
         # Constants for icon creation
         self.ICON_SIZE = (64, 64)
         self.PADDING = 2
         self.BAR_WIDTH = (self.ICON_SIZE[0] - self.PADDING * 4) // 3
-        
+
         # Create initial icon
         icon_image = self.create_icon(0, 0, 0)
-        
+
         # Store system drive for repeated use
         self.system_drive = os.environ.get('SystemDrive', 'C:') if self.os_type == 'Windows' else '/'
 
@@ -85,7 +86,7 @@ class SystemMetricsTray:
     def draw_usage_bar(self, draw, index, usage, gradient_colors):
         x = self.PADDING + index * (self.BAR_WIDTH + self.PADDING)
         usage_height = int(((self.ICON_SIZE[1] - 2 * self.PADDING) * usage / 100))
-        
+
         if usage_height > 0:
             y_start = self.ICON_SIZE[1] - self.PADDING - usage_height
             for y in range(usage_height):
@@ -102,7 +103,7 @@ class SystemMetricsTray:
         # Draw background and outlines
         for i in range(3):
             x = self.PADDING + i * (self.BAR_WIDTH + self.PADDING)
-            
+
             # Background
             for y in range(self.ICON_SIZE[1] - 2 * self.PADDING):
                 draw.line(
@@ -110,7 +111,7 @@ class SystemMetricsTray:
                     fill=self._gradient_cache['bg'][y],
                     width=1
                 )
-            
+
             # Outline
             draw.rectangle([
                 (x, self.PADDING),
@@ -127,10 +128,10 @@ class SystemMetricsTray:
     def update_metrics(self):
         while not self.stop_event.is_set():
             cpu_usage, mem_usage, disk_usage = self.get_system_metrics()
-            
+
             new_icon = self.create_icon(cpu_usage, mem_usage, disk_usage)
             self.tray_icon.icon = new_icon
-            
+
             disk_label = "C:" if self.os_type == "Windows" else "/"
             self.tray_icon.title = (
                 f"Low-Profile Performance Profile (L3P) v.{VERSION}\n"
@@ -144,6 +145,7 @@ class SystemMetricsTray:
     def exit_app(self):
         self.stop_event.set()
         self.tray_icon.stop()
+
 
 if __name__ == '__main__':
     app = SystemMetricsTray()
