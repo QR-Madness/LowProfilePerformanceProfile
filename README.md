@@ -16,6 +16,11 @@ Simply run the executable and look for the icon in your system tray. Hover over 
 
 To exit, right-click the icon and select "Exit."
 
+### CMD-Based Startup Trick
+
+L3P is low-profile and will never install itself, thus to be able to quick-launch the app, add the built executable
+to your home folder.
+
 ## System Requirements
 
 - Windows 7 or later ([see: 'Why Only Windows?' below](#why-only-windows))
@@ -24,6 +29,6 @@ To exit, right-click the icon and select "Exit."
 ### Why only Windows?
 
 Linux has so many incredibly useful tools for monitoring system performance (e.g. bashtop, widgets, and KDE
- have lots of cool performance gadgets too).
+have lots of cool performance gadgets too).
 
 Additionally, no Mac implementation exists as I'm unfamiliar with the widget ecosystem.

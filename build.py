@@ -31,7 +31,7 @@ def build_executable():
             sys.executable,
             '-m',
             'PyInstaller',
-            '--name=LowProfilePerformanceProfile',
+            '--name=l3p',
             '--onefile',
             '--noconsole',
             '--add-data=README.md;.',
