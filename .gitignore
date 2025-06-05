@@ -1,0 +1,9 @@
+# Tooling configurations
+.idea
+
+# Spec file
+*.spec
+
+# Residual builds
+build
+dist
