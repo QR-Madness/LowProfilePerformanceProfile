@@ -14,9 +14,10 @@ except ImportError:
     BUILD_DATE = "unknown"
 
 class L3PTray:
-    def __init__(self):
+    def __init__(self, show_profile_event: Event = None,):
         self.os_type = platform.system()
         self.stop_event = Event()
+        self.show_profile_event = show_profile_event
 
         # Cache gradients to avoid recalculation
         self._gradient_cache = {
@@ -42,6 +43,7 @@ class L3PTray:
             icon_image,
             "System Metrics",
             menu=pystray.Menu(
+                pystray.MenuItem("Show Profile", self.toggle_profile),
                 pystray.MenuItem("Exit", self.exit_app)
             )
         )
@@ -144,3 +146,7 @@ class L3PTray:
     def exit_app(self):
         self.stop_event.set()
         self.tray_icon.stop()
+
+    def toggle_profile(self):
+        """Toggle the profile window visibility"""
+        self.show_profile_event.set()
