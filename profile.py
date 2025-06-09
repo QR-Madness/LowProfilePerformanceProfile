@@ -1,13 +1,25 @@
-import dearpygui.dearpygui as dpg
-import psutil
 import time
 from datetime import datetime
 
+import dearpygui.dearpygui as dpg
+import psutil
+
+
 class L3PProfile:
     def __init__(self):
+        self.main_window = None
         self.update_interval = 1.0
         self.last_update = 0
         self.metrics = {}
+        self.tab_states = {}  # Store expansion states
+        self.colors = {
+            "CPU": (141, 40, 40, 255),  # Red theme
+            "Memory": (40, 141, 40, 255),  # Green theme
+            "Disk": (40, 40, 141, 255),  # Blue theme
+            "Network": (141, 141, 40, 255),  # Yellow theme
+            "Processes": (141, 40, 141, 255),  # Purple theme
+            "System": (40, 141, 141, 255)  # Cyan theme
+        }
         self.init_metrics()
 
     def init_metrics(self):
@@ -19,6 +31,36 @@ class L3PProfile:
             "Processes": {},
             "System": {}
         }
+        # Initialize tab states
+        self.tab_states = {category: True for category in self.metrics.keys()}
+
+    def header_callback(self, sender):
+        # Update tab state when clicked
+        category = dpg.get_item_label(sender)
+        self.tab_states[category] = dpg.get_item_state(sender)
+
+    def create_theme(self):
+        with dpg.theme() as global_theme:
+            with dpg.theme_component(dpg.mvAll):
+                # Dark sci-fi background
+                dpg.add_theme_color(dpg.mvThemeCol_WindowBg, (15, 15, 20, 255))
+                dpg.add_theme_color(dpg.mvThemeCol_Text, (200, 200, 200, 255))
+                dpg.add_theme_color(dpg.mvThemeCol_Border, (40, 40, 50, 255))
+                dpg.add_theme_style(dpg.mvStyleVar_WindowRounding, 5)
+                dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 3)
+                dpg.add_theme_style(dpg.mvStyleVar_WindowBorderSize, 1)
+
+        # Create themes for each category
+        self.category_themes = {}
+        for category, color in self.colors.items():
+            with dpg.theme() as category_theme:
+                with dpg.theme_component(dpg.mvAll):
+                    dpg.add_theme_color(dpg.mvThemeCol_HeaderHovered, color)
+                    dpg.add_theme_color(dpg.mvThemeCol_HeaderActive, color)
+                    dpg.add_theme_color(dpg.mvThemeCol_Text, color)
+            self.category_themes[category] = category_theme
+
+        return global_theme
 
     def update_interval_callback(self, sender, data):
         self.update_interval = data
@@ -108,15 +150,24 @@ class L3PProfile:
 
         with dpg.window(tag=self.main_window):
             dpg.add_slider_float(
-                label="Update Interval (seconds)",
+                label="Update Interval",
                 default_value=self.update_interval,
+                format="%.1fs",
                 min_value=0.1,
                 max_value=5.0,
                 callback=self.update_interval_callback
             )
+            dpg.add_button(label="Font Manager", callback=lambda: dpg.show_font_manager())
+            dpg.add_button(label="Close", callback=lambda: dpg.stop_dearpygui())
 
             for category in self.metrics.keys():
-                with dpg.collapsing_header(label=category):
+                with dpg.collapsing_header(label=category, default_open=self.tab_states[category],
+                                           # FIXME this has to call a global method
+                                           # callback=self.header_callback
+                                           ) as header:
+                    # Apply a category-specific theme
+                    dpg.bind_item_theme(header, self.category_themes[category])
+
                     with dpg.group():
                         if category == "CPU":
                             dpg.add_text("", tag="CPU_Total Usage")
@@ -149,12 +200,25 @@ class L3PProfile:
 
     def run(self):
         dpg.create_context()
+
+        # Create and apply a theme
+        global_theme = self.create_theme()
+        dpg.bind_theme(global_theme)
+
         self.create_metrics_window()
 
-        dpg.create_viewport(title='System Metrics', width=500, height=600)
+        dpg.create_viewport(title='System Metrics', width=600, height=800)
+
+        # Set DPI scaling
+        dpg.set_global_font_scale(1.2)  # Increase font size
+        dpg.set_viewport_clear_color([10, 10, 15, 255])  # Dark sci-fi background
+
         dpg.setup_dearpygui()
         dpg.show_viewport()
         dpg.set_primary_window(self.main_window, True)
+
+        # Enable DPI awareness
+        dpg.configure_viewport("System Metrics", dpi_awareness=True)
 
         while dpg.is_dearpygui_running():
             self.update_metrics()
