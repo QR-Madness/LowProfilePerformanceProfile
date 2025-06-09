@@ -36,7 +36,7 @@ class L3PProfile:
             # Add update interval slider
             dpg.add_slider_float(
                 label="Update Interval (seconds)",
-                default_value=1.0,
+                default_value=self.update_interval,
                 min_value=0.1,
                 max_value=5.0,
                 callback=self.update_interval_callback
