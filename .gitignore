@@ -7,3 +7,6 @@
 # Residual builds
 build
 dist
+
+# Scripts
+*.bat

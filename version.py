@@ -8,8 +8,8 @@ def is_frozen():
 
 
 def get_version():
-    """Get the version string with 'dev' prefix for unfrozen environments"""
-    base_version = '1.0.0'
+    """Get the version string with the 'dev' prefix for unfrozen environments"""
+    base_version = '1.1.0'
     return base_version if is_frozen() else f'dev-{base_version}'
 
 
