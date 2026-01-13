@@ -1,4 +1,15 @@
-psutil~=5.9.5
-pystray~=0.19.5
-Pillow~=11.2.1
-dearpygui~=2.0.0
+# Core dependencies
+psutil>=5.9.0
+pystray>=0.19.0
+Pillow>=10.0.0
+dearpygui>=2.0.0
+
+# KDE/Plasma tray support (recommended for KDE users)
+PyQt6>=6.0.0
+
+# Development dependencies (optional)
+# pyinstaller>=6.0.0
+
+# Linux GNOME/GTK - for AppIndicator support (optional)
+# On Debian/Ubuntu: sudo apt install gir1.2-appindicator3-0.1 libgirepository1.0-dev
+# Then: pip install pygobject
