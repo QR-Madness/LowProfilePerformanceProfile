@@ -1,12 +1,31 @@
-# Tooling configurations
-.idea
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
 
-# Spec file
-*.spec
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
 
-# Residual builds
-build
-dist
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
 
-# Scripts
-*.bat
+# UV
+.uv/
+uv.lock
+
+# OS
+.DS_Store
+Thumbs.db
