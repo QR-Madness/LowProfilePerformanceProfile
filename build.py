@@ -53,8 +53,15 @@ def build_executable():
             '--onefile',
             '--noconsole',
             f'--add-data=README.md{sep}.',
+            '--paths=.',  # Add current directory to Python path
             '--hidden-import=PIL._tkinter_finder',
             '--hidden-import=pystray._base',
+            '--hidden-import=src.version',
+            '--hidden-import=src.metrics',
+            '--hidden-import=src.tray',
+            '--hidden-import=src.tray_qt',
+            '--hidden-import=src.profile_window',
+            '--hidden-import=src.app',
         ]
 
         # Platform-specific hidden imports

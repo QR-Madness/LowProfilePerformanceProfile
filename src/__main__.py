@@ -35,12 +35,12 @@ def main() -> int:
 
     # Handle version flag
     if args.version:
-        from .version import VERSION, BUILD_DATE
+        from src.version import VERSION, BUILD_DATE
         print(f"L3P v{VERSION} (built {BUILD_DATE})")
         return 0
 
     # Import app modules after argument parsing for faster --help/--version
-    from .app import L3PApp, run_tray_only, run_profile_only
+    from src.app import L3PApp, run_tray_only, run_profile_only
 
     try:
         if args.tray_only:
